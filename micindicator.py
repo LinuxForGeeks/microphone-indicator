@@ -1,8 +1,4 @@
-#!/usr/bin/python
-
-# This code is an example for a tutorial on Ubuntu Unity/Gnome AppIndicators:
-# http://candidtim.github.io/appindicator/2014/09/13/ubuntu-appindicator-step-by-step.html
-# https://gist.github.com/candidtim/7290a1ad6e465d680b68
+#!/usr/bin/python3
 
 import os
 import signal
@@ -10,8 +6,6 @@ import json
 import subprocess
 import re
 import gi
-
-from urllib2 import Request, urlopen # URLError
 
 gi.require_version('Gtk', '3.0')
 gi.require_version('AppIndicator3', '0.1')
@@ -30,7 +24,6 @@ APPINDICATOR_ID = 'micmuteindicator'
 keystr = "<Ctrl><Alt><Shift>M"
 
 class Indicator():
-    
 
     def __init__(self):
         self.indicator = appindicator.Indicator.new(APPINDICATOR_ID, self.get_current_state_icon(), appindicator.IndicatorCategory.SYSTEM_SERVICES)
@@ -42,7 +35,7 @@ class Indicator():
         Keybinder.init()
         Keybinder.set_use_cooked_accelerators(False)
         Keybinder.bind(keystr, self.callback_toggle_mic, "keystring %s (user data)" % keystr)
-        print ("Press '" + keystr + "' to toggle microphone mute")
+        print("Press '" + keystr + "' to toggle microphone mute")
 
     # callback function for the about_action's "activate" signal
     def show_about_dialog(self, _):
@@ -68,10 +61,8 @@ class Indicator():
     def callback_toggle_mic(self, keystr, user_data):
         self.toggle_mic(None)
 
-
     def get_resource(self, resource_name):
         return os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'resources'), resource_name)
-    
 
     def get_current_state_icon(self):
         if self.get_current_mic_state() == "[off]":
@@ -84,8 +75,8 @@ class Indicator():
         ps = subprocess.Popen(("amixer", "get", "Capture"), stdout=subprocess.PIPE)
         output = subprocess.check_output(('egrep', '-o', '\[o.+\]', '-m', '1'), stdin=ps.stdout)
         ps.wait()
-        return filter(lambda x: not re.match(r'^\s*$', x), output)
-
+        #return filter(lambda x: not re.match(r'^\s*$', x), output)
+        return output.decode("utf-8").rstrip()
 
     def build_menu(self):
         menu = Gtk.Menu()
@@ -147,6 +138,3 @@ if __name__ == "__main__":
     Indicator()
     signal.signal(signal.SIGINT, signal.SIG_DFL)
     Gtk.main()
-
-
-
