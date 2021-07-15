@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=Mic Indicator
+Comment=A microphone indicator for Gnome based Linux desktops
+Exec=micindicator
+Icon=/usr/share/micindicator/resources/icon.svg
+Terminal=false
+StartupNotify=true
+Type=Application
+Categories=GNOME;GTK;Utility;
