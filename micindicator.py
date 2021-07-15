@@ -76,7 +76,7 @@ class Indicator():
         output = subprocess.check_output(('egrep', '-o', '\[o.+\]', '-m', '1'), stdin=ps.stdout)
         ps.wait()
         #return filter(lambda x: not re.match(r'^\s*$', x), output)
-        return output.decode("utf-8").rstrip()
+        return output.decode().rstrip()
 
     def build_menu(self):
         menu = Gtk.Menu()
