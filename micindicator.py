@@ -62,7 +62,7 @@ class Indicator():
         self.toggle_mic(None)
 
     def get_resource(self, resource_name):
-        return os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'resources'), resource_name)
+        return os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'resources'), resource_name)
 
     def get_current_state_icon(self):
         if self.get_current_mic_state() == "[off]":
