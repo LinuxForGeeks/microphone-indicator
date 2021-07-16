@@ -36,7 +36,7 @@ Simply run the install script in `sudo` mode & all files should be updated.
 To change the global keyboard shortcut used to mute / unmute the microphone change keystroke combination in `keystr` variable in `micindicator.py` script and run the application again:
 
 ```python
-keystr = "<Ctrl><Alt><Shift>M"
+keystr = "<Ctrl>M"
 ```
 
 # Credits 

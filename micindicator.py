@@ -21,7 +21,7 @@ from gi.repository import GdkPixbuf
 
 
 APPINDICATOR_ID = 'micmuteindicator'
-keystr = "<Ctrl><Alt><Shift>M"
+keystr = "<Ctrl>M"
 
 class Indicator():
 
