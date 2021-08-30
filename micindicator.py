@@ -18,6 +18,7 @@ from gi.repository import Notify
 from gi.repository import Keybinder
 from threading import Timer
 from gi.repository import GdkPixbuf
+from settings import Settings
 
 
 APPINDICATOR_ID = 'micmuteindicator'
@@ -26,6 +27,7 @@ keystr = "<Ctrl>M"
 class Indicator():
 
     def __init__(self):
+        self.settings = Settings()
         self.indicator = appindicator.Indicator.new(APPINDICATOR_ID, self.get_current_state_icon(), appindicator.IndicatorCategory.SYSTEM_SERVICES)
         self.indicator.set_status(appindicator.IndicatorStatus.ACTIVE)
         self.indicator.set_menu(self.build_menu())
@@ -41,7 +43,7 @@ class Indicator():
     def show_about_dialog(self, _):
         aboutdialog = Gtk.AboutDialog()
 
-        authors = ["Sidnei Bernardo Junior"]
+        authors = ["Sidnei Bernardo Junior", "AXeL-dev"]
         documenters = ["Sidnei Bernardo Junior"]
 
         aboutdialog.set_program_name("Microphone AppIndicator for Ubuntu")
@@ -49,7 +51,7 @@ class Indicator():
         aboutdialog.set_logo(GdkPixbuf.Pixbuf.new_from_file(self.get_resource("icon.svg")))
         aboutdialog.set_authors(authors)
         aboutdialog.set_documenters(documenters)
-        aboutdialog.set_website("https://github.com/sidneibjunior/microphone-indicator")
+        aboutdialog.set_website("https://github.com/LinuxForGeeks/microphone-indicator")
         aboutdialog.set_website_label("Source code at GitHub")
         aboutdialog.connect("response", self.close_about_dialog)
 
@@ -85,6 +87,17 @@ class Indicator():
         self.item_toggle.connect('activate', self.toggle_mic)
         menu.append(self.item_toggle)
 
+        item_settings = Gtk.MenuItem('Settings')
+        menu_settings = Gtk.Menu()
+        item_settings.set_submenu(menu_settings)
+        menu.append(item_settings)
+
+        self.item_show_notifications = Gtk.CheckMenuItem('Show notifications')
+        if self.settings.show_notifications:
+            self.item_show_notifications.set_active(True)
+        self.item_show_notifications.connect('activate', self.toggle_show_notifications)
+        menu_settings.append(self.item_show_notifications)
+
         self.item_about = Gtk.MenuItem('About')
         self.item_about.connect('activate', self.show_about_dialog)
         menu.append(self.item_about)
@@ -95,6 +108,10 @@ class Indicator():
 
         menu.show_all()
         return menu
+
+    def toggle_show_notifications(self, widget):
+        self.settings.show_notifications = not self.settings.show_notifications
+        self.settings.save()
 
     def update_mic_state(self):
         self.update_menu_toggle_label()
@@ -111,8 +128,10 @@ class Indicator():
         self.update_mic_state()
 
         self.show_toggle_notification()
-        
+
     def show_toggle_notification(self):
+        if not self.settings.show_notifications:
+            return
         self.notification = Notify.Notification.new("Notify")
         title = ""
         if self.get_current_mic_state() == "[off]":
@@ -126,7 +145,7 @@ class Indicator():
         # creates a timer to close the notification as the 'set_timeout' Notify method is ignored by the server.
         t = Timer(1.0, self.close_toggle_notification) 
         t.start()
-    
+
     def close_toggle_notification(self):
         self.notification.close()
 
