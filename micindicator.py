@@ -74,10 +74,14 @@ class Indicator():
         return self.get_resource(icon_name)
 
     def get_current_mic_state(self):
-        ps = subprocess.Popen(("amixer", "get", "Capture"), stdout=subprocess.PIPE)
-        output = subprocess.check_output(('egrep', '-o', '\[o.+\]', '-m', '1'), stdin=ps.stdout)
+        # ps = subprocess.Popen(("amixer", "get", "Capture"), stdout=subprocess.PIPE)
+        # output = subprocess.check_output(('egrep', '-o', '\[o.+\]', '-m', '1'), stdin=ps.stdout)
+        # ps.wait()
+        # #return filter(lambda x: not re.match(r'^\s*$', x), output)
+        # return output.decode().rstrip()
+        ps = subprocess.Popen('pactl list sources | grep -A 10 $(pactl info | grep "Default Source" | cut -f3 -d" ")', shell=True, stdout=subprocess.PIPE)
+        output = subprocess.check_output('grep -qi "Mute: yes" && echo "[off]" || echo "[on]"', shell=True, stdin=ps.stdout)
         ps.wait()
-        #return filter(lambda x: not re.match(r'^\s*$', x), output)
         return output.decode().rstrip()
 
     def build_menu(self):
@@ -124,7 +128,8 @@ class Indicator():
             self.item_toggle.set_label("Turn Microphone Off ( " + keystr + " )")
 
     def toggle_mic(self, _):
-        subprocess.call('amixer set Capture toggle', shell=True)
+        # subprocess.call('amixer set Capture toggle', shell=True)
+        subprocess.call('pactl set-source-mute @DEFAULT_SOURCE@ toggle', shell=True)
         self.update_mic_state()
 
         self.show_toggle_notification()
