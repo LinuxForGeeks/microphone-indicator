@@ -22,7 +22,7 @@ from settings import Settings
 
 
 APPINDICATOR_ID = 'micmuteindicator'
-keystr = "<Ctrl>M"
+keystr = "<Ctrl><Alt>M"
 
 class Indicator():
 
